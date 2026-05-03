@@ -385,3 +385,7 @@ Toggle event received from WebSocket
 - **No rate limiting on auth endpoints.** The `/login` route and the OIDC `/authorize/submit` endpoint have no brute-force protection. Add `express-rate-limit` or a reverse-proxy-level rate limiter before exposing these publicly.
 - **10,000 checkbox limit is hard-coded.** The `TOTAL` constant is defined independently in both the server and the client and must be kept in sync manually. It is not exposed as a configuration option.
 
+
+
+https://github.com/user-attachments/assets/f3b4d711-a8b9-43ee-b13c-e27f35c4e53c
+
