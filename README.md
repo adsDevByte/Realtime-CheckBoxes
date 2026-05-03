@@ -384,4 +384,4 @@ Toggle event received from WebSocket
 - **No token refresh.** Access tokens expire after one hour and the client does not automatically renew them. Users must log in again after expiry.
 - **No rate limiting on auth endpoints.** The `/login` route and the OIDC `/authorize/submit` endpoint have no brute-force protection. Add `express-rate-limit` or a reverse-proxy-level rate limiter before exposing these publicly.
 - **10,000 checkbox limit is hard-coded.** The `TOTAL` constant is defined independently in both the server and the client and must be kept in sync manually. It is not exposed as a configuration option.
->>>>>>> de21991 ( made the Realtime Checkboxes App)
+
