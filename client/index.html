@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Checkbox Collective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080c10;
+      --surface:   #0d1117;
+      --border:    #1e2a38;
+      --accent:    #00e5ff;
+      --accent2:   #ff3d6b;
+      --muted:     #3a4a5c;
+      --text:      #c9d8e8;
+      --text-dim:  #4a6070;
+      --on:        #00e5ff;
+      --off:       #131d28;
+      --glow:      rgba(0,229,255,0.18);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      overflow: hidden;
+    }
+
+    /* ── Login Screen ───────────────────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+    }
+
+    .login-wrap {
+      text-align: center;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+      opacity: 0.7;
+    }
+
+    .login-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .login-title span { color: var(--accent); }
+
+    .login-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+
+    .login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--accent);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      z-index: -1;
+    }
+
+    .login-btn:hover { color: var(--bg); }
+    .login-btn:hover::before { transform: translateX(0); }
+
+    .login-grid-preview {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(20, 1fr);
+      gap: 3px;
+      width: 200px;
+      margin-left: auto; margin-right: auto;
+      opacity: 0.3;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.4; }
+    }
+
+    .login-grid-preview div {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 1px;
+    }
+
+    
+    #app { display: none; height: 100vh; flex-direction: column; }
+    #app.visible { display: flex; }
+
+    
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+      gap: 16px;
+    }
+
+    .header-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .header-title span { color: var(--accent); }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .stat-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      min-width: 52px;
+      text-align: right;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--border);
+      padding: 5px 12px 5px 8px;
+      border-radius: 999px;
+    }
+
+    .user-dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #22c55e;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .user-name { font-size: 12px; color: var(--text); }
+
+    .logout-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+    .logout-btn:hover { color: var(--accent2); border-color: var(--accent2); }
+
+    
+    #progress-bar {
+      height: 2px;
+      background: var(--border);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    
+    #grid-wrap {
+      flex: 1;
+      overflow: auto;
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(100, 12px);
+      gap: 3px;
+    }
+
+    /* Each checkbox is a styled div */
+    .cb {
+      width: 12px; height: 12px;
+      background: var(--off);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.08s, box-shadow 0.08s, transform 0.08s;
+      user-select: none;
+    }
+
+    .cb:hover {
+      border-color: var(--muted);
+      transform: scale(1.3);
+      z-index: 1;
+    }
+
+    .cb.on {
+      background: var(--on);
+      border-color: var(--on);
+      box-shadow: 0 0 5px var(--glow);
+    }
+
+    .cb.flash {
+      animation: flash 0.35s ease;
+    }
+
+    @keyframes flash {
+      0%  { transform: scale(1.6); box-shadow: 0 0 12px var(--accent); }
+      100%{ transform: scale(1); }
+    }
+
+    
+    #toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      color: var(--text);
+      font-size: 12px;
+      padding: 10px 16px;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-label">Collaborative experiment</div>
+    <div class="login-title">Checkbox<br/><span>Collective</span></div>
+    <p class="login-sub">10,000 checkboxes. Shared in real-time.<br/>Everyone sees every toggle, instantly.</p>
+    <a href="/login" class="login-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+      Sign in to join
+    </a>
+    
+    <div class="login-grid-preview" id="preview-grid"></div>
+  </div>
+</div>
+
+
+<div id="app">
+  <header>
+    <div class="header-title">Check<span>box</span></div>
+    <div class="header-stats">
+      <div class="stat">
+        <div class="stat-val" id="stat-checked">0</div>
+        <div class="stat-label">checked</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="stat-pct">0%</div>
+        <div class="stat-label">filled</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="stat-online">1</div>
+        <div class="stat-label">online</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-pill">
+        <div class="user-dot"></div>
+        <span class="user-name" id="user-name">—</span>
+      </div>
+      <button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
+    </div>
+  </header>
+
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+
+  <div id="grid-wrap">
+    <div id="grid"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+const TOTAL = 10000;
+const token = localStorage.getItem("access_token");
+const user  = JSON.parse(localStorage.getItem("user") || "null");
+
+let ws = null;
+let cells = [];
+
+
+if (!token) {
+  // Build decorative preview grid
+  const pg = document.getElementById("preview-grid");
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement("div");
+    if (Math.random() < 0.4) d.style.opacity = "0";
+    pg.appendChild(d);
+  }
+} else {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("app").classList.add("visible");
+  if (user) document.getElementById("user-name").textContent = user.name || user.sub;
+  initApp();
+}
+
+
+function initApp() {
+  // Build grid
+  const grid = document.getElementById("grid");
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < TOTAL; i++) {
+    const el = document.createElement("div");
+    el.className = "cb";
+    el.dataset.i = i;
+    el.addEventListener("click", () => toggle(i));
+    frag.appendChild(el);
+    cells[i] = el;
+  }
+  grid.appendChild(frag);
+
+  // Connect WebSocket
+  const wsProto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${wsProto}://${location.host}?token=${token}`);
+
+  ws.onopen = () => showToast("Connected");
+
+  ws.onclose = (event) => {
+    
+    if (event.code === 1008) {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    } else {
+      
+      showToast("Disconnected — refresh to reconnect");
+    }
+  };
+
+  ws.onerror = (err) => {
+    
+    console.warn("WebSocket error:", err);
+  };
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === "init") {
+      data.state.forEach((val, i) => setCb(i, val, false));
+      updateStats();
+    } else if (data.type === "toggle") {
+      setCb(data.index, data.value, true);
+      updateStats();
+    } else if (data.type === "meta") {
+      document.getElementById("stat-online").textContent = data.online;
+    }
+  };
+}
+
+function toggle(i) {
+  const newVal = cells[i].classList.contains("on") ? 0 : 1;
+  setCb(i, newVal, true);
+  updateStats();
+  ws.send(JSON.stringify({ type: "toggle", index: i, value: newVal }));
+}
+
+function setCb(i, val, animate) {
+  const el = cells[i];
+  if (!el) return;
+  const on = val === 1;
+  el.classList.toggle("on", on);
+  if (animate) {
+    el.classList.remove("flash");
+    void el.offsetWidth; 
+    el.classList.add("flash");
+  }
+}
+
+function updateStats() {
+  const checked = cells.filter(c => c.classList.contains("on")).length;
+  const pct = ((checked / TOTAL) * 100).toFixed(1);
+  document.getElementById("stat-checked").textContent = checked.toLocaleString();
+  document.getElementById("stat-pct").textContent = pct + "%";
+  document.getElementById("progress-fill").style.width = pct + "%";
+}
+
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2500);
+}
+</script>
+</body>
+</html>
